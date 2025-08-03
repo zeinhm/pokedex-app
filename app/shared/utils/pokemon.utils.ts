@@ -51,3 +51,29 @@ export const extractIdFromUrl = (url: string): number => {
   const matches = url.match(/\/pokemon\/(\d+)\//);
   return matches ? parseInt(matches[1], 10) : 0;
 };
+
+export const getShortStatName = (name: string) => {
+  switch (name) {
+    case "hp":
+      return "HP";
+    case "attack":
+      return "Attack";
+    case "defense":
+      return "Defense";
+    case "special-attack":
+      return "Sp. Atk";
+    case "special-defense":
+      return "Sp. Def";
+    case "speed":
+      return "Speed";
+    default:
+      return name.charAt(0).toUpperCase() + name.slice(1);
+  }
+};
+
+export const getStatColor = (percentage: number) => {
+  if (percentage >= 80) return "bg-green-500";
+  if (percentage >= 60) return "bg-yellow-500";
+  if (percentage >= 40) return "bg-orange-500";
+  return "bg-red-500";
+};
