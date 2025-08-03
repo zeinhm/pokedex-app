@@ -21,7 +21,7 @@ const toPascalCase = (str) =>
 const kebabCase = componentName;
 const PascalCase = toPascalCase(componentName);
 const originalPath = `app/components/ui/${kebabCase}.tsx`;
-const newDir = `app/components/${PascalCase}`;
+const newDir = `app/shared/components/${PascalCase}`;
 const newPath = `${newDir}/${PascalCase}.tsx`;
 
 // Dynamic test template - works for any component
