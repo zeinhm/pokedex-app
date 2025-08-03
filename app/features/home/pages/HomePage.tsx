@@ -13,7 +13,7 @@ export const meta: MetaFunction = () => {
 export default function HomePage() {
   return (
     <div className="min-h-screen ">
-      <div className="relative container mx-auto px-4 py-16">
+      <div className="relative container mx-auto px-4 py-24">
         <HeroSection />
         <FeaturesGrid />
         <StatusIndicator />

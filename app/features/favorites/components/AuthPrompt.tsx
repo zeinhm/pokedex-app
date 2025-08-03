@@ -8,11 +8,10 @@ export function AuthPrompt() {
         <div className="text-center mb-6">
           <User className="w-16 h-16 mx-auto mb-4 text-purple-400" />
           <h3 className="text-xl font-semibold text-white mb-2">
-            Sign in to save favorites
+            Login to save favorites
           </h3>
           <p className="text-gray-400 text-sm">
-            Create an account or sign in to start building your Pokemon
-            collection
+            Create an account or Login to start building your Pokemon collection
           </p>
         </div>
 
@@ -22,7 +21,7 @@ export function AuthPrompt() {
             className="w-full bg-blue-600 flex items-center justify-center text-white py-2 rounded-lg hover:bg-blue-600 transition-colors"
           >
             <LogIn className="mr-2 h-4 w-4" />
-            Sign In
+            Login
           </Link>
           <div className="mt-6 text-center">
             <p className="text-gray-400">
@@ -31,7 +30,7 @@ export function AuthPrompt() {
                 to="/register"
                 className="text-blue-400 hover:text-blue-300 font-medium"
               >
-                Sign up here
+                Register here
               </Link>
             </p>
           </div>

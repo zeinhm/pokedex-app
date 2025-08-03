@@ -54,7 +54,7 @@ export function RegisterForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <Card className="w-full max-w-md bg-gray-800/50 backdrop-blur-sm border-gray-700/50">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-white">
@@ -211,7 +211,7 @@ export function RegisterForm() {
                 to="/login"
                 className="text-blue-400 hover:text-blue-300 font-medium"
               >
-                Sign in here
+                Login here
               </Link>
             </p>
           </div>

@@ -3,8 +3,8 @@ import { LoginForm } from "../components/LoginForm";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Sign In - Pokedex App" },
-    { name: "description", content: "Sign in to your Pokemon trainer account" },
+    { title: "Login - Pokedex App" },
+    { name: "description", content: "Login to your Pokemon trainer account" },
   ];
 };
 

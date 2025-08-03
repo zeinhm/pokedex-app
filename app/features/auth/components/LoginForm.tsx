@@ -61,7 +61,7 @@ export function LoginForm() {
             Welcome Back
           </CardTitle>
           <CardDescription className="text-gray-400">
-            Sign in to your Pokemon trainer account
+            Login to your Pokemon trainer account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -140,7 +140,7 @@ export function LoginForm() {
                 ) : (
                   <>
                     <LogIn className="mr-2 h-4 w-4" />
-                    Sign In
+                    Login
                   </>
                 )}
               </Button>
@@ -154,7 +154,7 @@ export function LoginForm() {
                 to="/register"
                 className="text-blue-400 hover:text-blue-300 font-medium"
               >
-                Sign up here
+                Register here
               </Link>
             </p>
           </div>
