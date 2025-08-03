@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router";
-import { ArrowLeft, Heart, Loader2, AlertCircle } from "lucide-react";
+import { ArrowLeft, Heart, AlertCircle } from "lucide-react";
 import { usePokemon } from "@features/pokemon/hooks/usePokemon";
 import {
   useIsFavorited,
@@ -11,6 +11,7 @@ import { PokemonDetailMobile } from "../components/PokemonDetailMobileView";
 import { PokemonDetailDesktopView } from "../components/PokemonDetailDesktopView";
 import type { MetaFunction } from "react-router";
 import { useAuth } from "@/features/auth";
+import { LoadingState } from "@/shared/components/States";
 
 export const meta: MetaFunction = ({ params }) => {
   const pokemonId = params.id;
@@ -27,7 +28,13 @@ export default function PokemonDetailPage() {
   const { id } = useParams();
   const [imageLoading, setImageLoading] = useState(true);
 
-  const { data: pokemon, isLoading, isError, error } = usePokemon(id || "");
+  const {
+    data: pokemon,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = usePokemon(id as string);
   const { user } = useAuth();
   const { data: favoriteStatus, isLoading: favoriteLoading } = useIsFavorited(
     pokemon?.id || 0
@@ -65,32 +72,18 @@ export default function PokemonDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800">
-        <div className="w-full h-screen flex flex-col">
-          <div className="flex items-center justify-between p-6">
-            <Link to="/pokemon">
-              <ArrowLeft className="w-6 h-6 text-white" />
-            </Link>
-            <span className="text-white font-semibold">Loading...</span>
-            <Heart className="w-6 h-6 text-gray-500" />
-          </div>
-
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <Loader2 className="w-16 h-16 animate-spin mx-auto mb-4 text-purple-400" />
-              <p className="text-gray-300 text-lg">
-                Loading Pokemon details...
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <LoadingState
+        title="Loading Pokemon..."
+        description="Fetching data from the Pokemon API"
+        size="lg"
+        className="pt-24"
+      />
     );
   }
 
   if (isError || !pokemon) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800">
+      <div className="min-h-screen pt-16">
         <div className="w-full h-screen flex flex-col">
           <div className="flex items-center justify-between p-6">
             <Link to="/pokemon">
@@ -102,11 +95,11 @@ export default function PokemonDetailPage() {
 
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
-              <AlertCircle className="w-16 h-16 mx-auto mb-4 text-red-400" />
-              <h3 className="text-red-300 text-lg font-semibold mb-2">
+              <AlertCircle className="w-16 h-16 mx-auto mb-4 text-red-500" />
+              <h3 className="text-red-400 text-lg font-semibold mb-2">
                 Pokemon not found
               </h3>
-              <p className="text-red-200 mb-4">
+              <p className="text-red-400 mb-4">
                 {error instanceof Error
                   ? error.message
                   : "Failed to load Pokemon details"}
@@ -137,7 +130,7 @@ export default function PokemonDetailPage() {
   const isFavorited = Boolean(favoriteStatus?.isFavorited);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 py-16">
       <PokemonDetailMobile
         pokemon={pokemon}
         isFavorite={isFavorited}

@@ -1,8 +1,12 @@
 import { useRef, useEffect } from "react";
-import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { PokemonCard } from "@features/pokemon/components/PokemonCard";
 import { usePokemonList } from "@features/pokemon/hooks/usePokemon";
-import { Button } from "@components/Button";
+import {
+  EmptyState,
+  ErrorState,
+  LoadingState,
+} from "@/shared/components/States";
 
 export default function PokemonListPage() {
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -48,40 +52,26 @@ export default function PokemonListPage() {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="flex flex-col items-center justify-center py-16">
-          <div className="text-center ">
-            <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-purple-400" />
-            <p className="text-gray-300 text-lg">Loading Pokemon...</p>
-            <p className="text-gray-300 text-sm mt-2">
-              Fetching data from the Pokemon API
-            </p>
-          </div>
-        </div>
+        <LoadingState
+          title="Loading Pokemon..."
+          description="Fetching data from the Pokemon API"
+          size="lg"
+          className="pt-24"
+        />
       );
     }
 
     if (isError) {
       return (
-        <div className="flex flex-col items-center justify-center py-16">
-          <div className="text-center">
-            <AlertCircle className="w-12 h-12 mx-auto mb-4 text-red-400" />
-            <h3 className="text-red-300 text-lg font-semibold mb-2">
-              Oops! Something went wrong
-            </h3>
-            <p className="text-red-200 mb-4">
-              {error instanceof Error
-                ? error.message
-                : "Failed to load Pokemon data"}
-            </p>
-            <Button
-              onClick={() => refetch()}
-              className="bg-red-600 hover:bg-red-700 text-white border-red-500 transition-all duration-200"
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Try Again
-            </Button>
-          </div>
-        </div>
+        <ErrorState
+          title="Oops! Something went wrong"
+          message={
+            error instanceof Error
+              ? error.message
+              : "Failed to load Pokemon data"
+          }
+          onRetry={() => refetch()}
+        />
       );
     }
 
@@ -112,14 +102,10 @@ export default function PokemonListPage() {
     }
 
     return (
-      <div className="text-center py-16">
-        <div className="bg-gray-800/30 backdrop-blur-sm rounded-lg p-8 border border-gray-700/50">
-          <p className="text-gray-400 text-lg">No Pokemon found</p>
-          <p className="text-gray-500 text-sm mt-2">
-            Try adjusting your search criteria
-          </p>
-        </div>
-      </div>
+      <EmptyState
+        title="No Pokemon found"
+        description="Try adjusting your search criteria"
+      />
     );
   };
 

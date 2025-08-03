@@ -1,10 +1,19 @@
 import { Button } from "@components/Button";
-import { ArrowLeft, Heart, Loader2, Ruler, Star, Weight } from "lucide-react";
+import {
+  ArrowLeft,
+  Heart,
+  Loader2,
+  Ruler,
+  Shield,
+  Weight,
+  Zap,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import type { Pokemon } from "@features/pokemon/types/pokemon.types";
 import { getBackgroundColorByPokemonType } from "@/shared/utils/pokemon.utils";
 import { StatusBar } from "./StatusBar";
 import { useAuth } from "@/features/auth";
+import { PokemonInfo } from "./PokemonInfo";
 
 interface PokemonDetailProps {
   pokemon: Pokemon;
@@ -106,29 +115,27 @@ export function PokemonDetailDesktopView(props: PokemonDetailProps) {
             </div>
 
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-gray-800/50 rounded-lg p-6 text-center">
-                <Weight className="w-8 h-8 mx-auto mb-3 text-purple-400" />
-                <p className="text-2xl font-bold text-white mb-1">
-                  {pokemon.weight / 10} kg
-                </p>
-                <p className="text-sm text-gray-400">Weight</p>
-              </div>
+              <PokemonInfo
+                icon={<Weight className="w-6 h-6 text-purple-400" />}
+                title="Weight"
+                value={`${pokemon.weight / 10} kg`}
+              />
+              <PokemonInfo
+                icon={<Ruler className="w-6 h-6 text-purple-400" />}
+                title="Height"
+                value={`${pokemon.height / 10} m`}
+              />
 
-              <div className="bg-gray-800/50 rounded-lg p-6 text-center">
-                <Ruler className="w-8 h-8 mx-auto mb-3 text-purple-400" />
-                <p className="text-2xl font-bold text-white mb-1">
-                  {pokemon.height / 10} m
-                </p>
-                <p className="text-sm text-gray-400">Height</p>
-              </div>
-
-              <div className="bg-gray-800/50 rounded-lg p-6 text-center">
-                <Star className="w-8 h-8 mx-auto mb-3 text-purple-400" />
-                <p className="text-2xl font-bold text-white mb-1">
-                  {pokemon.base_experience}
-                </p>
-                <p className="text-sm text-gray-400">Base EXP</p>
-              </div>
+              <PokemonInfo
+                icon={<Zap className="w-6 h-6 text-purple-400" />}
+                title="Base Experience"
+                value={pokemon.base_experience || "Unknown"}
+              />
+              <PokemonInfo
+                icon={<Shield className="w-6 h-6 text-purple-400" />}
+                title="ID"
+                value={`#${pokemon.id.toString().padStart(3, "0")}`}
+              />
             </div>
           </div>
 

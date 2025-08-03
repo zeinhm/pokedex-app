@@ -8,7 +8,7 @@ interface StatusBarProps {
   maxStat?: number;
 }
 
-export function StatusBar({ stat, maxStat = 255 }: StatusBarProps) {
+export function StatusBar({ stat, maxStat = 100 }: StatusBarProps) {
   const percentage = Math.min((stat.base_stat / maxStat) * 100, 100);
 
   return (

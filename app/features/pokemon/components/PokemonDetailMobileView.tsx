@@ -7,6 +7,8 @@ import {
   Ruler,
   Shuffle,
   TrendingUp,
+  Zap,
+  Shield,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Tabs";
 import { getBackgroundColorByPokemonType } from "@/shared/utils/pokemon.utils";
@@ -14,6 +16,8 @@ import type { Pokemon } from "@features/pokemon/types/pokemon.types";
 import { StatusBar } from "./StatusBar";
 import { useAuth } from "@/features/auth/context/auth.context";
 import { Button } from "@/shared/components/Button";
+import { PokemonInfo } from "./PokemonInfo";
+import { PokemonAbility } from "./PokemonAbility";
 
 interface PokemonDetailMobileProps {
   pokemon: Pokemon;
@@ -134,57 +138,29 @@ export function PokemonDetailMobile({
         <TabsContent value="about" className="mt-0">
           <div className="space-y-6 py-6">
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-800/50 rounded-lg p-6 text-center">
-                <div className="flex items-center justify-center mb-3">
-                  <Weight className="w-6 h-6 text-purple-400" />
-                </div>
-                <p className="text-2xl font-bold text-white mb-1">
-                  {pokemon.weight / 10} kg
-                </p>
-                <p className="text-sm text-gray-400">Weight</p>
-              </div>
-
-              <div className="bg-gray-800/50 rounded-lg p-6 text-center">
-                <div className="flex items-center justify-center mb-3">
-                  <Ruler className="w-6 h-6 text-purple-400" />
-                </div>
-                <p className="text-2xl font-bold text-white mb-1">
-                  {pokemon.height / 10} m
-                </p>
-                <p className="text-sm text-gray-400">Height</p>
-              </div>
+              <PokemonInfo
+                icon={<Weight className="w-6 h-6 text-purple-400" />}
+                title="Weight"
+                value={`${pokemon.weight / 10} kg`}
+              />
+              <PokemonInfo
+                icon={<Ruler className="w-6 h-6 text-purple-400" />}
+                title="Height"
+                value={`${pokemon.height / 10} m`}
+              />
+              <PokemonInfo
+                icon={<Zap className="w-6 h-6 text-purple-400" />}
+                title="Base Experience"
+                value={pokemon.base_experience || "Unknown"}
+              />
+              <PokemonInfo
+                icon={<Shield className="w-6 h-6 text-purple-400" />}
+                title="ID"
+                value={`#${pokemon.id.toString().padStart(3, "0")}`}
+              />
             </div>
 
-            <div className="bg-gray-800/50 rounded-lg p-6">
-              <p className="text-gray-300 leading-relaxed">
-                Having been domesticated from birth,{" "}
-                {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}{" "}
-                is regarded as both a rare and well-behaved Pokemon.
-              </p>
-            </div>
-
-            <div className="bg-gray-800/50 rounded-lg p-6">
-              <h3 className="text-white font-semibold mb-4 text-lg">
-                Abilities
-              </h3>
-              <div className="space-y-3">
-                {pokemon.abilities.map((ability) => (
-                  <div
-                    key={ability.ability.name}
-                    className="flex items-center justify-between p-3 bg-gray-700/30 rounded-lg"
-                  >
-                    <span className="text-gray-300 capitalize">
-                      {ability.ability.name.replace("-", " ")}
-                    </span>
-                    {ability.is_hidden && (
-                      <span className="text-xs bg-yellow-600 text-white px-3 py-1 rounded-full">
-                        Hidden
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+            <PokemonAbility abilities={pokemon.abilities} />
           </div>
         </TabsContent>
 
