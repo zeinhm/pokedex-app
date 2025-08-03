@@ -4,6 +4,18 @@ import { ArrowLeft, Heart, Loader2, AlertCircle } from "lucide-react";
 import { usePokemon } from "@features/pokemon/hooks/usePokemon";
 import { PokemonDetailMobile } from "../components/PokemonDetailMobileView";
 import { PokemonDetailDesktopView } from "../components/PokemonDetailDesktopView";
+import type { MetaFunction } from "react-router";
+
+export const meta: MetaFunction = ({ params }) => {
+  const pokemonId = params.id;
+  return [
+    { title: `Pokemon #${pokemonId} - Pokedex App` },
+    {
+      name: "description",
+      content: `View detailed information about Pokemon #${pokemonId}`,
+    },
+  ];
+};
 
 export default function PokemonDetailPage() {
   const { id } = useParams();

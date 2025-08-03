@@ -1,4 +1,4 @@
-import { Button } from "@/components/Button";
+import { Button } from "@components/Button";
 import { ArrowLeft, Heart, Loader2, Ruler, Star, Weight } from "lucide-react";
 import { Link } from "react-router";
 import type { Pokemon } from "@features/pokemon/types/pokemon.types";

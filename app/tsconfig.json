@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "@components/*": ["./components/*"],
+      "@components/*": ["./shared/components/*"],
       "@features/*": ["./features/*"],
       "@shared/*": ["./shared/*"],
       "@providers/*": ["./providers/*"],

@@ -13,8 +13,6 @@ export const meta: MetaFunction = () => {
 export default function HomePage() {
   return (
     <div className="min-h-screen ">
-      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
-
       <div className="relative container mx-auto px-4 py-16">
         <HeroSection />
         <FeaturesGrid />

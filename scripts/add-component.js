@@ -93,12 +93,12 @@ try {
 
   console.log(`✅ ${PascalCase} installed successfully!`);
   console.log(`📂 Structure created:`);
-  console.log(`   app/components/${PascalCase}/`);
+  console.log(`   app/shared/components/${PascalCase}/`);
   console.log(`   ├── ${PascalCase}.tsx`);
   console.log(`   ├── ${PascalCase}.test.tsx (with dynamic tests)`);
   console.log(`   └── index.ts`);
   console.log(
-    `📝 Import: import { ${PascalCase} } from "@/components/${PascalCase}";`
+    `📝 Import: import { ${PascalCase} } from "@components/${PascalCase}";`
   );
   console.log(`🧪 Tests: Basic rendering + className + props forwarding`);
 } catch (error) {
