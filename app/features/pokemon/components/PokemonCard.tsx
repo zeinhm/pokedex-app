@@ -1,31 +1,58 @@
 import { useState } from "react";
-import { Link } from "react-router";
-import { Heart, Eye } from "lucide-react";
+import { Link, useNavigate } from "react-router";
+import { Heart, Eye, Loader2 } from "lucide-react";
 import { Button } from "@components/Button";
 import { usePokemon } from "../hooks/usePokemon";
+import {
+  useIsFavorited,
+  useAddFavorite,
+  useRemoveFavorite,
+} from "@features/favorites/hooks/useFavorites";
 import {
   extractIdFromUrl,
   getBackgroundColorByPokemonType,
 } from "@/shared/utils/pokemon.utils";
+import { useAuth } from "@/features/auth";
 
 interface PokemonCardProps {
   url: string;
-  onToggleFavorite?: (pokemonId: number, isFavorite: boolean) => void;
-  isFavorite?: boolean;
 }
 
-export function PokemonCard({
-  url,
-  onToggleFavorite,
-  isFavorite = false,
-}: PokemonCardProps) {
+export function PokemonCard({ url }: PokemonCardProps) {
   const pokemonId = extractIdFromUrl(url);
   const { data: pokemon, isLoading } = usePokemon(pokemonId);
   const [imageLoading, setImageLoading] = useState(true);
 
-  const handleToggleFavorite = () => {
-    if (onToggleFavorite && pokemon) {
-      onToggleFavorite(pokemon.id, !isFavorite);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { data: favoriteStatus, isLoading: favoriteLoading } =
+    useIsFavorited(pokemonId);
+  const addFavorite = useAddFavorite();
+  const removeFavorite = useRemoveFavorite();
+
+  const handleToggleFavorite = async () => {
+    if (!pokemon || !user || !favoriteStatus) return;
+
+    const favoriteData = {
+      pokemonId: pokemon.id,
+      pokemonName: pokemon.name,
+      pokemonImage:
+        pokemon.sprites.other["official-artwork"].front_default ||
+        pokemon.sprites.front_default ||
+        "/placeholder-pokemon.png",
+    };
+
+    try {
+      if (favoriteStatus.isFavorited && favoriteStatus.favoriteId) {
+        await removeFavorite.mutateAsync({
+          favoriteId: favoriteStatus.favoriteId,
+          pokemonId: pokemon.id,
+        });
+      } else {
+        await addFavorite.mutateAsync(favoriteData);
+      }
+    } catch (error) {
+      console.error("Failed to toggle favorite:", error);
     }
   };
 
@@ -45,6 +72,10 @@ export function PokemonCard({
     pokemon.sprites.other["official-artwork"].front_default ||
     pokemon.sprites.front_default ||
     "/placeholder-pokemon.png";
+
+  const isFavorited = Boolean(favoriteStatus?.isFavorited);
+
+  const isToggleLoading = addFavorite.isPending || removeFavorite.isPending;
 
   return (
     <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 text-center text-white border border-gray-700/50 hover:bg-gray-800/70 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/20">
@@ -70,11 +101,16 @@ export function PokemonCard({
           variant="ghost"
           size="icon"
           className={`absolute top-2 right-2 ${
-            isFavorite ? "text-red-400" : "text-gray-400"
+            isFavorited ? "text-red-400" : "text-gray-400"
           } hover:text-red-400 hover:bg-gray-700/50 transition-all duration-200`}
-          onClick={handleToggleFavorite}
+          onClick={user ? handleToggleFavorite : () => navigate("/login")}
+          disabled={favoriteLoading || isToggleLoading}
         >
-          <Heart className={`w-5 h-5 ${isFavorite ? "fill-current" : ""}`} />
+          {isToggleLoading ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Heart className={`w-5 h-5 ${isFavorited ? "fill-current" : ""}`} />
+          )}
         </Button>
       </div>
 

@@ -1,9 +1,10 @@
 import { Button } from "@components/Button";
 import { ArrowLeft, Heart, Loader2, Ruler, Star, Weight } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import type { Pokemon } from "@features/pokemon/types/pokemon.types";
 import { getBackgroundColorByPokemonType } from "@/shared/utils/pokemon.utils";
 import { StatusBar } from "./StatusBar";
+import { useAuth } from "@/features/auth";
 
 interface PokemonDetailProps {
   pokemon: Pokemon;
@@ -13,6 +14,7 @@ interface PokemonDetailProps {
   imageLoading: boolean;
   setImageLoading: (loading: boolean) => void;
   totalStats: number;
+  toggleLoading: boolean;
 }
 
 export function PokemonDetailDesktopView(props: PokemonDetailProps) {
@@ -24,7 +26,10 @@ export function PokemonDetailDesktopView(props: PokemonDetailProps) {
     imageLoading,
     setImageLoading,
     totalStats,
+    toggleLoading,
   } = props;
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className="hidden lg:block">
@@ -40,13 +45,23 @@ export function PokemonDetailDesktopView(props: PokemonDetailProps) {
               Back to Pokemon List
             </Link>
           </Button>
-          <button onClick={onToggleFavorite}>
-            <Heart
-              className={`w-6 h-6 ${
-                isFavorite ? "text-red-400 fill-current" : "text-gray-400"
-              }`}
-            />
-          </button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={`${
+              isFavorite ? "text-red-400" : "text-gray-400"
+            } hover:text-red-400 hover:bg-gray-700/50 transition-all duration-200`}
+            onClick={user ? onToggleFavorite : () => navigate("/login")}
+            disabled={toggleLoading}
+          >
+            {toggleLoading ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <Heart
+                className={`w-5 h-5 ${isFavorite ? "fill-current" : ""}`}
+              />
+            )}
+          </Button>
         </div>
 
         <div className="grid grid-cols-2 gap-12">

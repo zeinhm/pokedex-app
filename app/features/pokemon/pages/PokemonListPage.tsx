@@ -1,11 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useRef, useEffect } from "react";
 import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { PokemonCard } from "@features/pokemon/components/PokemonCard";
 import { usePokemonList } from "@features/pokemon/hooks/usePokemon";
 import { Button } from "@components/Button";
 
 export default function PokemonListPage() {
-  const [favorites, setFavorites] = useState<Set<number>>(new Set());
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -43,39 +42,6 @@ export default function PokemonListPage() {
       }
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-
-  useEffect(() => {
-    const savedFavorites = localStorage.getItem("pokemon-favorites");
-    if (savedFavorites) {
-      try {
-        const favoriteIds = JSON.parse(savedFavorites);
-        setFavorites(new Set(favoriteIds));
-      } catch (error) {
-        console.error("Failed to parse favorites from localStorage:", error);
-      }
-    }
-  }, []);
-
-  const handleToggleFavorite = useCallback(
-    (pokemonId: number, isFavorite: boolean) => {
-      setFavorites((prev) => {
-        const newFavorites = new Set(prev);
-        if (isFavorite) {
-          newFavorites.add(pokemonId);
-        } else {
-          newFavorites.delete(pokemonId);
-        }
-
-        localStorage.setItem(
-          "pokemon-favorites",
-          JSON.stringify([...newFavorites])
-        );
-
-        return newFavorites;
-      });
-    },
-    []
-  );
 
   const allPokemon = data?.pages.flatMap((page) => page.results) ?? [];
 
@@ -124,14 +90,7 @@ export default function PokemonListPage() {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {allPokemon.map((pokemon) => (
-              <PokemonCard
-                key={pokemon.name}
-                url={pokemon.url}
-                isFavorite={favorites.has(
-                  Number(pokemon.url.split("/").slice(-2, -1)[0])
-                )}
-                onToggleFavorite={handleToggleFavorite}
-              />
+              <PokemonCard key={pokemon.name} url={pokemon.url} />
             ))}
           </div>
 

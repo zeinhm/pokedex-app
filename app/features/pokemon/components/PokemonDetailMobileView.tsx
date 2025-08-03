@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   ArrowLeft,
   Heart,
@@ -7,12 +7,13 @@ import {
   Ruler,
   Shuffle,
   TrendingUp,
-  MapPin,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Tabs";
 import { getBackgroundColorByPokemonType } from "@/shared/utils/pokemon.utils";
 import type { Pokemon } from "@features/pokemon/types/pokemon.types";
 import { StatusBar } from "./StatusBar";
+import { useAuth } from "@/features/auth/context/auth.context";
+import { Button } from "@/shared/components/Button";
 
 interface PokemonDetailMobileProps {
   pokemon: Pokemon;
@@ -22,6 +23,7 @@ interface PokemonDetailMobileProps {
   imageUrl: string;
   imageLoading: boolean;
   setImageLoading: (loading: boolean) => void;
+  toggleLoading: boolean;
 }
 
 export function PokemonDetailMobile({
@@ -32,7 +34,11 @@ export function PokemonDetailMobile({
   imageUrl,
   imageLoading,
   setImageLoading,
+  toggleLoading,
 }: PokemonDetailMobileProps) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   return (
     <div className="lg:hidden">
       <div className="flex items-center justify-between p-6">
@@ -42,13 +48,21 @@ export function PokemonDetailMobile({
         <span className="text-white font-semibold text-lg">
           #{pokemon.id.toString().padStart(3, "0")}
         </span>
-        <button onClick={onToggleFavorite}>
-          <Heart
-            className={`w-6 h-6 ${
-              isFavorite ? "text-red-400 fill-current" : "text-gray-400"
-            }`}
-          />
-        </button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className={`${
+            isFavorite ? "text-red-400" : "text-gray-400"
+          } hover:text-red-400 hover:bg-gray-700/50 transition-all duration-200`}
+          onClick={user ? onToggleFavorite : () => navigate("/login")}
+          disabled={toggleLoading}
+        >
+          {toggleLoading ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Heart className={`w-5 h-5 ${isFavorite ? "fill-current" : ""}`} />
+          )}
+        </Button>
       </div>
 
       <div className="px-6 pb-8 text-center">

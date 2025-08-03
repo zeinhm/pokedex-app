@@ -1,7 +1,10 @@
 import { Link } from "react-router";
 import { Button } from "@components/Button";
+import { useAuth } from "@/features/auth";
 
 export function HeroSection() {
+  const { user } = useAuth();
+
   return (
     <div className="text-center text-white">
       <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent">
@@ -20,6 +23,16 @@ export function HeroSection() {
         >
           <Link to="/pokemon">Browse Pokemon</Link>
         </Button>
+
+        {user && (
+          <Button
+            asChild
+            size="lg"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+          >
+            <Link to="/favorites">My Favorites</Link>
+          </Button>
+        )}
       </div>
     </div>
   );

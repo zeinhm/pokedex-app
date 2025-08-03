@@ -1,10 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useParams } from "react-router";
 import { ArrowLeft, Heart, Loader2, AlertCircle } from "lucide-react";
 import { usePokemon } from "@features/pokemon/hooks/usePokemon";
+import {
+  useIsFavorited,
+  useAddFavorite,
+  useRemoveFavorite,
+} from "@features/favorites/hooks/useFavorites";
 import { PokemonDetailMobile } from "../components/PokemonDetailMobileView";
 import { PokemonDetailDesktopView } from "../components/PokemonDetailDesktopView";
 import type { MetaFunction } from "react-router";
+import { useAuth } from "@/features/auth";
 
 export const meta: MetaFunction = ({ params }) => {
   const pokemonId = params.id;
@@ -20,46 +26,41 @@ export const meta: MetaFunction = ({ params }) => {
 export default function PokemonDetailPage() {
   const { id } = useParams();
   const [imageLoading, setImageLoading] = useState(true);
-  const [isFavorite, setIsFavorite] = useState(false);
 
   const { data: pokemon, isLoading, isError, error } = usePokemon(id || "");
+  const { user } = useAuth();
+  const { data: favoriteStatus, isLoading: favoriteLoading } = useIsFavorited(
+    pokemon?.id || 0
+  );
+  const addFavorite = useAddFavorite();
+  const removeFavorite = useRemoveFavorite();
+  const toggleFavoriteLoading =
+    addFavorite.isPending || removeFavorite.isPending;
 
-  useEffect(() => {
-    if (pokemon) {
-      const savedFavorites = localStorage.getItem("pokemon-favorites");
-      if (savedFavorites) {
-        try {
-          const favoriteIds = JSON.parse(savedFavorites);
-          setIsFavorite(favoriteIds.includes(pokemon.id));
-        } catch (error) {
-          console.error("Failed to parse favorites from localStorage:", error);
-        }
+  const handleToggleFavorite = async () => {
+    if (!pokemon || !user || !favoriteStatus) return;
+
+    const favoriteData = {
+      pokemonId: pokemon.id,
+      pokemonName: pokemon.name,
+      pokemonImage:
+        pokemon.sprites.other["official-artwork"].front_default ||
+        pokemon.sprites.front_default ||
+        "/placeholder-pokemon.png",
+    };
+
+    try {
+      if (favoriteStatus.isFavorited && favoriteStatus.favoriteId) {
+        await removeFavorite.mutateAsync({
+          favoriteId: favoriteStatus.favoriteId,
+          pokemonId: pokemon.id,
+        });
+      } else {
+        await addFavorite.mutateAsync(favoriteData);
       }
+    } catch (error) {
+      console.error("Failed to toggle favorite:", error);
     }
-  }, [pokemon]);
-
-  const handleToggleFavorite = () => {
-    if (!pokemon) return;
-
-    const savedFavorites = localStorage.getItem("pokemon-favorites");
-    let favoriteIds: number[] = [];
-
-    if (savedFavorites) {
-      try {
-        favoriteIds = JSON.parse(savedFavorites);
-      } catch (error) {
-        console.error("Failed to parse favorites from localStorage:", error);
-      }
-    }
-
-    if (isFavorite) {
-      favoriteIds = favoriteIds.filter((favId) => favId !== pokemon.id);
-    } else {
-      favoriteIds.push(pokemon.id);
-    }
-
-    localStorage.setItem("pokemon-favorites", JSON.stringify(favoriteIds));
-    setIsFavorite(!isFavorite);
   };
 
   if (isLoading) {
@@ -76,8 +77,10 @@ export default function PokemonDetailPage() {
 
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
-              <Loader2 className="w-12 h-12 animate-spin text-purple-400 mb-4 mx-auto" />
-              <p className="text-gray-300">Loading Pokemon details...</p>
+              <Loader2 className="w-16 h-16 animate-spin mx-auto mb-4 text-purple-400" />
+              <p className="text-gray-300 text-lg">
+                Loading Pokemon details...
+              </p>
             </div>
           </div>
         </div>
@@ -97,17 +100,23 @@ export default function PokemonDetailPage() {
             <Heart className="w-6 h-6 text-gray-500" />
           </div>
 
-          <div className="flex-1 flex items-center justify-center px-6">
+          <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
-              <AlertCircle className="w-12 h-12 text-red-400 mb-4 mx-auto" />
+              <AlertCircle className="w-16 h-16 mx-auto mb-4 text-red-400" />
               <h3 className="text-red-300 text-lg font-semibold mb-2">
-                Pokemon Not Found
+                Pokemon not found
               </h3>
-              <p className="text-red-200 text-center">
+              <p className="text-red-200 mb-4">
                 {error instanceof Error
                   ? error.message
                   : "Failed to load Pokemon details"}
               </p>
+              <Link
+                to="/pokemon"
+                className="text-blue-400 hover:text-blue-300 underline"
+              >
+                Back to Pokemon List
+              </Link>
             </div>
           </div>
         </div>
@@ -125,26 +134,30 @@ export default function PokemonDetailPage() {
     0
   );
 
+  const isFavorited = Boolean(favoriteStatus?.isFavorited);
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800">
       <PokemonDetailMobile
         pokemon={pokemon}
-        isFavorite={isFavorite}
+        isFavorite={isFavorited}
         onToggleFavorite={handleToggleFavorite}
         totalStats={totalStats}
         imageUrl={imageUrl}
         imageLoading={imageLoading}
         setImageLoading={setImageLoading}
+        toggleLoading={toggleFavoriteLoading}
       />
 
       <PokemonDetailDesktopView
         pokemon={pokemon}
-        isFavorite={isFavorite}
+        isFavorite={isFavorited}
         onToggleFavorite={handleToggleFavorite}
-        totalStats={totalStats}
         imageUrl={imageUrl}
         imageLoading={imageLoading}
         setImageLoading={setImageLoading}
+        totalStats={totalStats}
+        toggleLoading={toggleFavoriteLoading}
       />
     </div>
   );
