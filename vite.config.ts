@@ -43,6 +43,9 @@ export default defineConfig(({ mode }) => ({
         "public/",
         "build/",
         "dist/",
+        // Exclude index files that only re-export components
+        "**/index.ts",
+        "**/index.tsx",
       ],
     },
     server: {
