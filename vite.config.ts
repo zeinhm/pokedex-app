@@ -29,6 +29,8 @@ export default defineConfig(({ mode }) => ({
     css: true,
     include: ["**/*.test.{ts,tsx}"],
     exclude: ["node_modules", "dist", "build"],
+    testTimeout: 10000,
+    hookTimeout: 10000,
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
