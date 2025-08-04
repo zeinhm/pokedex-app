@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 // Mock React Router
 export const mockNavigate = vi.fn();

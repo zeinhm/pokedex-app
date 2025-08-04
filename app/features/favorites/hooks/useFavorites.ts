@@ -60,7 +60,6 @@ export function useAddFavorite() {
 
   return useMutation({
     mutationFn: (favoriteData: CreateFavoriteData) => {
-      console.log("favoriteData", favoriteData);
       if (!user?.uid) throw new Error("User not authenticated");
       return FavoritesService.addFavorite(user.uid, favoriteData);
     },
