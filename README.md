@@ -1,87 +1,244 @@
-# Welcome to React Router!
+# Pokedex App
 
-A modern, production-ready template for building full-stack React applications using React Router.
+A modern Pokemon explorer built with React, TypeScript, and Firebase. Browse Pokemon, save favorites, and explore detailed stats in a responsive, user-friendly interface.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+## Prerequisites
+
+- **Node.js** 18+
+- **pnpm** (preferred package manager)
+
+```bash
+# Install pnpm if you don't have it
+npm install -g pnpm
+```
+
+## Quick Start
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
+
+# Visit http://localhost:3000
+```
 
 ## Features
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+- **Pokemon Browse**: Infinite scroll through 1000+ Pokemon with smooth loading
+- **Search & Filter**: Find Pokemon by name, type, or generation (coming soon)
+- **Detailed Views**: Complete stats, abilities, and high-quality artwork
+- **Favorites System**: Save and manage your favorite Pokemon (requires account)
+- **User Authentication**: Register/login with Firebase Auth
+- **Responsive Design**: Works seamlessly on desktop and mobile
+- **Real-time Updates**: Favorites sync across devices instantly
 
-## Getting Started
+## Tech Stack
 
-### Installation
+### Core
 
-Install the dependencies:
+- **React 19** with **TypeScript** for type-safe development
+- **React Router v7** with flat-routes for file-based routing
+- **Vite** for fast builds and hot reload
+
+### State & Data
+
+- **TanStack Query** (React Query) for server state management
+- **Firebase Auth** for authentication
+- **Firestore** for user data and favorites
+- **Pokemon API** (PokeAPI) for Pokemon data
+
+### UI & Styling
+
+- **Tailwind CSS** for styling
+- **Radix UI** components for accessibility
+- **Lucide React** for icons
+
+### Forms & Validation
+
+- **React Hook Form** for form handling
+- **Zod** for schema validation
+- **Custom error handling** with user-friendly messages
+
+### Testing
+
+- **Vitest** as test runner
+- **React Testing Library** for component testing
+- **Jest DOM** for DOM assertions
+
+## Project Structure
+
+```
+app/
+├── features/          # Feature-based modules
+│   ├── auth/          # Authentication (login, register)
+│   ├── pokemon/       # Pokemon browsing and details
+│   └── favorites/     # Favorites management
+├── shared/            # Shared utilities and components
+│   ├── components/    # Reusable UI components
+│   ├── services/      # API services and HTTP client
+│   └── utils/         # Helper functions
+├── routes/            # File-based routing (flat routes)
+└── providers/         # App providers
+```
+
+## Available Scripts
+
+### 1. Start the Application
 
 ```bash
-npm install
+pnpm install
+pnpm dev
+# App will be available at http://localhost:3000
 ```
 
-### Development
-
-Start the development server with HMR:
+### 2. Explore Features
 
 ```bash
-npm run dev
+# While the app is running, open these URLs:
+# http://localhost:3000           - Homepage
+# http://localhost:3000/pokemon   - Pokemon list page with infinite scroll
+# http://localhost:3000/login     - Authentication form
+# http://localhost:3000/favorites - Favorites (requires login)
 ```
 
-Your application will be available at `http://localhost:5173`.
-
-## Building for Production
-
-Create a production build:
+### 3. Test Code Quality
 
 ```bash
-npm run build
+# Run the full test suite
+pnpm test:run
+
+# Check test coverage
+pnpm test:coverage
+
+# View coverage in browser
+pnpm test:coverage:ui
+
+# Check TypeScript types
+pnpm typecheck
 ```
 
-## Deployment
-
-### Docker Deployment
-
-To build and run using Docker:
+### 4. Interactive Testing
 
 ```bash
-docker build -t my-app .
+# Open Vitest UI for interactive testing
+pnpm test:ui
+# Then visit http://localhost:51204
 
-# Run the container
-docker run -p 3000:3000 my-app
+# Test specific components
+pnpm test --grep "PokemonCard"
+pnpm test --grep "authentication"
+pnpm test --grep "LoginForm"
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
+### 5. Performance Check
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
+```bash
+# Build and check bundle size
+pnpm build
 
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+# Start production server to test performance
+pnpm start
+# Visit http://localhost:3000 and check network/performance tab in dev tools
 ```
 
-## Styling
+## Key Implementation Highlights
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+- **Infinite Scrolling**: Uses Intersection Observer API for performance
+- **Real-time Favorites**: Firestore subscriptions with React Query integration
+- **Error Handling**: Comprehensive error boundaries and user feedback
+- **Image Optimization**: Progressive loading with fallback states
+- **Form Validation**: Complex validation rules with proper error messages
+- **Testing Strategy**: Component, integration, and hook testing
+- **TypeScript**: Full type coverage with strict configuration
+
+## Testing the App
+
+1. **Browse Pokemon**: Visit the homepage to see the infinite scroll in action
+2. **Search**: Try searching for specific Pokemon names (coming soon)
+3. **Authentication**: Register a new account or login
+4. **Favorites**: Add/remove favorites (requires login)
+5. **Responsive**: Test on different screen sizes
+6. **Performance**: Check network tab for efficient API calls
+
+## Troubleshooting
+
+### Common Issues
+
+```bash
+# Port already in use
+pnpm dev --port 3001
+
+# Clear cache and reinstall
+rm -rf node_modules pnpm-lock.yaml
+pnpm install
+
+# TypeScript errors
+pnpm typecheck
+# Fix any type errors before running tests
+
+# Test failures
+pnpm test --reporter=verbose
+# Get detailed test output
+```
+
+### Development Environment
+
+```bash
+# Check Node version (requires Node 18+)
+node --version
+
+# Check pnpm version
+pnpm --version
+
+# Verify all dependencies installed
+pnpm list --depth=0
+```
+
+### Firebase Setup (Optional)
+
+```bash
+# The app works without Firebase, but authentication/favorites require it
+# If you see Firebase errors, the Pokemon browsing will still work
+# To set up Firebase:
+# 1. Create .env file with Firebase config
+# 2. Restart dev server: pnpm dev
+```
+
+### Code Quality
+
+- **TypeScript Coverage**: Run `pnpm typecheck` - zero errors
+- **Test Coverage**: Run `pnpm test:coverage` - aiming to >80% coverage
+- **Component Testing**: Check `app/features/*/components/*.test.tsx`
+- **Hook Testing**: Check `app/features/*/hooks/*.test.tsx`
+
+### Architecture Patterns
+
+- **Feature-based Structure**: Each feature is self-contained
+- **Custom Hooks**: Business logic separated from UI components
+- **Error Boundaries**: Graceful error handling throughout
+- **Query Key Management**: Hierarchical cache invalidation strategy
+
+### Performance Features
+
+- **Infinite Scroll**: Intersection Observer implementation
+- **Image Loading**: Progressive loading with skeleton states
+- **API Optimization**: React Query caching and background sync
+- **Bundle Size**: Check with `pnpm build`
+
+### UI/UX Details
+
+- **A bit fancy design**: As the Pokedex App intentionally for the entertainment purpose
+- **Responsive Design**: Test on mobile/desktop
+- **Loading States**: Skeleton loading, spinners
+- **Error States**: Network errors, empty states, retry mechanisms
+- **Accessibility**: Proper ARIA labels, keyboard navigation
+
+## Additional Documentation
+
+Detailed architectural decisions, component documentation, and deployment guides can be found in `/docs`.
 
 ---
 
-Built with ❤️ using React Router.
+**Note**: This project demonstrates modern React development practices, scalable architecture patterns, and production-ready code quality suitable for enterprise applications.
