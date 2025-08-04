@@ -10,7 +10,7 @@ import {
   SheetTrigger,
 } from "@components/Sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@components/Avatar";
-import { MobileNavItems } from "./MobileNavItems";
+import { MobileNavItems } from "../MobileNavItems";
 
 interface MobileMenuProps {
   user: any;

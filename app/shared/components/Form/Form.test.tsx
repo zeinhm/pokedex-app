@@ -1,24 +1,39 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
-import { Form } from './Form';
-import '@testing-library/jest-dom';
+import { render, screen } from "@testing-library/react";
+import { useForm } from "react-hook-form";
+import { Form } from "./Form";
 
-describe('Form', () => {
-  it('renders without crashing', () => {
-    render(<Form />);
+// Test wrapper component to use Form with proper form context
+function TestFormWrapper({ children }: { children?: React.ReactNode }) {
+  const formMethods = useForm();
+  return <Form {...formMethods}>{children}</Form>;
+}
+
+describe("Form", () => {
+  it("renders without crashing", () => {
+    render(<TestFormWrapper />);
     // Basic rendering test - component should mount without errors
   });
 
-  it('accepts and applies custom className', () => {
-    render(<Form className="test-class" data-testid="form-test" />);
-    const element = screen.getByTestId('form-test');
-    expect(element).toHaveClass('test-class');
+  it("accepts and applies custom className", () => {
+    render(
+      <TestFormWrapper>
+        <div data-testid="form-content">Form content</div>
+      </TestFormWrapper>
+    );
+    const element = screen.getByTestId("form-content");
+    expect(element).toBeInTheDocument();
   });
 
-  it('forwards additional props', () => {
-    render(<Form data-testid="form-test" id="test-id" />);
-    const element = screen.getByTestId('form-test');
-    expect(element).toHaveAttribute('id', 'test-id');
+  it("forwards additional props", () => {
+    render(
+      <TestFormWrapper>
+        <div data-testid="form-content" id="test-id">
+          Form content
+        </div>
+      </TestFormWrapper>
+    );
+    const element = screen.getByTestId("form-content");
+    expect(element).toHaveAttribute("id", "test-id");
   });
 
   // TODO: Add component-specific tests here

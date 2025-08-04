@@ -1,4 +1,4 @@
-import AppNavigation from "@/components/AppNavigation";
+import { AppNavigation } from "@/components/AppNavigation";
 import { Outlet } from "react-router";
 
 export default function Layout() {

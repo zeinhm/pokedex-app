@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "@/features/auth";
 import { cn } from "@/lib/utils";
-import { Logo } from "./Logo";
-import { DesktopNavItems } from "./DesktopNavItems";
-import { AvatarDropdown } from "./AvatarDropdown";
-import { MobileMenu } from "./MobileMenu";
+import { Logo } from "../Logo";
+import { DesktopNavItems } from "../DesktopNavItems";
+import { AvatarDropdown } from "../AvatarDropdown";
+import { MobileMenu } from "../MobileMenu";
 import { useScrollDirection } from "@/shared/hooks/useScrollDirection";
 
 const AppNavigation = () => {
