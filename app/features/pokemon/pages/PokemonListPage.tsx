@@ -1,7 +1,11 @@
 import { useRef, useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Search as SearchIcon } from "lucide-react";
 import { PokemonCard } from "@features/pokemon/components/PokemonCard";
+import { SearchInput } from "@features/pokemon/components/SearchInput";
 import { usePokemonList } from "@features/pokemon/hooks/usePokemon";
+import { useSearchPokemon } from "@features/pokemon/hooks/useSearchPokemon";
+import { useDebouncedSearch } from "@/shared/hooks/useDebounceSearch";
+
 import {
   EmptyState,
   ErrorState,
@@ -10,6 +14,17 @@ import {
 
 export default function PokemonListPage() {
   const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  const {
+    searchTerm,
+    debouncedSearchTerm,
+    isTyping,
+    updateSearchTerm,
+    clearSearch,
+    hasValidSearch,
+  } = useDebouncedSearch("", { delay: 300, minLength: 2 });
+
+  const searchResults = useSearchPokemon(debouncedSearchTerm);
 
   const {
     data,
@@ -23,6 +38,11 @@ export default function PokemonListPage() {
   } = usePokemonList();
 
   useEffect(() => {
+    // Skip infinite scroll when searching
+    // As it is intentionally have diferent method for searching
+
+    if (hasValidSearch) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
@@ -45,18 +65,89 @@ export default function PokemonListPage() {
         observer.unobserve(currentRef);
       }
     };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, hasValidSearch]);
 
   const allPokemon = data?.pages.flatMap((page) => page.results) ?? [];
 
-  const renderContent = () => {
+  const renderSearchResults = () => {
+    if (isTyping) {
+      return (
+        <div className="flex items-center justify-center py-12">
+          <div className="flex items-center gap-2 text-gray-400">
+            <Loader2 className="w-5 h-5 animate-spin" />
+            <span>Typing...</span>
+          </div>
+        </div>
+      );
+    }
+
+    if (searchResults.isLoading) {
+      return (
+        <LoadingState
+          title="Searching Pokemon..."
+          description={`Looking for "${debouncedSearchTerm}"`}
+          size="lg"
+          className="pt-12"
+        />
+      );
+    }
+
+    if (searchResults.isError) {
+      return (
+        <ErrorState
+          title="Search failed"
+          message="Unable to search Pokemon at the moment"
+          onRetry={() => window.location.reload()}
+        />
+      );
+    }
+
+    if (searchResults.isEmpty) {
+      return (
+        <div className="text-center py-16">
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-lg p-8 border border-gray-700/50 max-w-md mx-auto">
+            <SearchIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-400 text-lg mb-2">No Pokemon found</p>
+            <p className="text-gray-500 text-sm">
+              No Pokemon match "{debouncedSearchTerm}". Try a different name.
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    if (searchResults.hasResults) {
+      return (
+        <>
+          <div className="mb-6">
+            <p className="text-gray-300 text-center">
+              Found {searchResults.data.length} Pokemon matching "
+              {debouncedSearchTerm}"
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {searchResults.data.map((pokemon) => (
+              <PokemonCard
+                key={pokemon.id}
+                url={`https://pokeapi.co/api/v2/pokemon/${pokemon.id}/`}
+              />
+            ))}
+          </div>
+        </>
+      );
+    }
+
+    return null;
+  };
+
+  const renderBrowseResults = () => {
     if (isLoading) {
       return (
         <LoadingState
           title="Loading Pokemon..."
           description="Fetching data from the Pokemon API"
           size="lg"
-          className="pt-24"
+          className="pt-12"
         />
       );
     }
@@ -116,38 +207,37 @@ export default function PokemonListPage() {
           <h1 className="text-4xl font-bold text-white mb-4">
             Pokemon Collection
           </h1>
-          <p className="text-gray-300 max-w-2xl mx-auto">
+          <p className="text-gray-300 max-w-2xl mx-auto mb-6">
             Discover and explore the amazing world of Pokemon. Search, filter,
             and save your favorites!
           </p>
+
+          <SearchInput
+            value={searchTerm}
+            onChange={updateSearchTerm}
+            onClear={clearSearch}
+            isLoading={isTyping || searchResults.isLoading}
+            className="mb-8"
+          />
         </div>
 
-        {data && !isLoading && !isError && (
+        {!hasValidSearch && data && !isLoading && !isError && (
           <div className="max-w-6xl mx-auto mb-6">
-            <div className="bg-gray-800/30 backdrop-blur-sm rounded-lg p-4 border border-gray-700/50">
-              <p className="text-gray-300">
-                {allPokemon.length > 0 ? (
-                  <>
-                    Showing{" "}
-                    <span className="text-purple-400 font-semibold">
-                      {allPokemon.length}
-                    </span>{" "}
-                    Pokemon
-                    {hasNextPage && (
-                      <span className="text-gray-500 ml-2">
-                        (More available)
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  <>No Pokemon found</>
-                )}
-              </p>
-            </div>
+            <p className="text-gray-300">
+              {allPokemon.length > 0
+                ? `Showing ${allPokemon.length} Pokemon`
+                : "No Pokemon to display"}
+            </p>
           </div>
         )}
 
-        <div className="max-w-6xl mx-auto">{renderContent()}</div>
+        <div className="max-w-6xl mx-auto">
+          {/**
+           * As PokeAPI doesn't directly support searching a list of resources by name,
+           * I provide a custom search implementation and make it separate
+           */}
+          {hasValidSearch ? renderSearchResults() : renderBrowseResults()}
+        </div>
       </div>
     </div>
   );
