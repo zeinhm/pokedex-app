@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import {
   ArrowLeft,
   Heart,
@@ -42,11 +42,13 @@ export function PokemonDetailMobile({
 }: PokemonDetailMobileProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const currentSearch = searchParams.toString();
 
   return (
     <div className="lg:hidden">
       <div className="flex items-center justify-between p-6">
-        <Link to="/pokemon">
+        <Link to={`/pokemon?${currentSearch}`}>
           <ArrowLeft className="w-6 h-6 text-white" />
         </Link>
         <span className="text-white font-semibold text-lg">

@@ -4,27 +4,26 @@ import { PokemonCard } from "@features/pokemon/components/PokemonCard";
 import { SearchInput } from "@features/pokemon/components/SearchInput";
 import { usePokemonList } from "@features/pokemon/hooks/usePokemon";
 import { useSearchPokemon } from "@features/pokemon/hooks/useSearchPokemon";
-import { useDebouncedSearch } from "@/shared/hooks/useDebounceSearch";
-
 import {
   EmptyState,
   ErrorState,
   LoadingState,
 } from "@/shared/components/States";
+import { useDebouncedSearch } from "@/shared/hooks/useDebounceSearch";
 
 export default function PokemonListPage() {
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const {
     searchTerm,
-    debouncedSearchTerm,
+    debouncedTerm,
     isTyping,
-    updateSearchTerm,
-    clearSearch,
     hasValidSearch,
-  } = useDebouncedSearch("", { delay: 300, minLength: 2 });
+    updateSearch,
+    clearSearch,
+  } = useDebouncedSearch({ delay: 300, minLength: 2 });
 
-  const searchResults = useSearchPokemon(debouncedSearchTerm);
+  const searchResults = useSearchPokemon(debouncedTerm);
 
   const {
     data,
@@ -38,9 +37,6 @@ export default function PokemonListPage() {
   } = usePokemonList();
 
   useEffect(() => {
-    // Skip infinite scroll when searching
-    // As it is intentionally have diferent method for searching
-
     if (hasValidSearch) return;
 
     const observer = new IntersectionObserver(
@@ -50,9 +46,7 @@ export default function PokemonListPage() {
           fetchNextPage();
         }
       },
-      {
-        rootMargin: "100px",
-      }
+      { rootMargin: "100px" }
     );
 
     const currentRef = loadMoreRef.current;
@@ -85,7 +79,7 @@ export default function PokemonListPage() {
       return (
         <LoadingState
           title="Searching Pokemon..."
-          description={`Looking for "${debouncedSearchTerm}"`}
+          description={`Looking for "${debouncedTerm}"`}
           size="lg"
           className="pt-12"
         />
@@ -109,7 +103,7 @@ export default function PokemonListPage() {
             <SearchIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-400 text-lg mb-2">No Pokemon found</p>
             <p className="text-gray-500 text-sm">
-              No Pokemon match "{debouncedSearchTerm}". Try a different name.
+              No Pokemon match "{debouncedTerm}". Try a different name.
             </p>
           </div>
         </div>
@@ -120,10 +114,12 @@ export default function PokemonListPage() {
       return (
         <>
           <div className="mb-6">
-            <p className="text-gray-300 text-center">
-              Found {searchResults.data.length} Pokemon matching "
-              {debouncedSearchTerm}"
-            </p>
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-lg p-4 border border-gray-700/50">
+              <p className="text-gray-300 text-center">
+                Found {searchResults.data.length} Pokemon matching "
+                {debouncedTerm}"
+              </p>
+            </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {searchResults.data.map((pokemon) => (
@@ -214,7 +210,7 @@ export default function PokemonListPage() {
 
           <SearchInput
             value={searchTerm}
-            onChange={updateSearchTerm}
+            onChange={updateSearch}
             onClear={clearSearch}
             isLoading={isTyping || searchResults.isLoading}
             className="mb-8"
@@ -223,11 +219,13 @@ export default function PokemonListPage() {
 
         {!hasValidSearch && data && !isLoading && !isError && (
           <div className="max-w-6xl mx-auto mb-6">
-            <p className="text-gray-300">
-              {allPokemon.length > 0
-                ? `Showing ${allPokemon.length} Pokemon`
-                : "No Pokemon to display"}
-            </p>
+            <div className="bg-gray-800/30 backdrop-blur-sm rounded-lg p-4 border border-gray-700/50">
+              <p className="text-gray-300">
+                {allPokemon.length > 0
+                  ? `Showing ${allPokemon.length} Pokemon`
+                  : "No Pokemon to display"}
+              </p>
+            </div>
           </div>
         )}
 

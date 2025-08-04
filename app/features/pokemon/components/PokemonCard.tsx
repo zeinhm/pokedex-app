@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { Heart, Eye, Loader2 } from "lucide-react";
 import { Button } from "@components/Button";
 import { Card, CardContent, CardHeader } from "@components/Card";
@@ -28,6 +28,8 @@ export function PokemonCard({ url }: PokemonCardProps) {
 
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
   const { data: favoriteStatus, isLoading: favoriteLoading } =
     useIsFavorited(pokemonId);
   const addFavorite = useAddFavorite();
@@ -59,6 +61,11 @@ export function PokemonCard({ url }: PokemonCardProps) {
     }
   };
 
+  const handleLoginRedirect = () => {
+    const currentSearch = searchParams.toString();
+    navigate(`/login${currentSearch ? `?${currentSearch}` : ""}`);
+  };
+
   if (isLoading) {
     return (
       <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700/50">
@@ -84,6 +91,9 @@ export function PokemonCard({ url }: PokemonCardProps) {
 
   const isToggleLoading = addFavorite.isPending || removeFavorite.isPending;
 
+  const currentSearch = searchParams.toString();
+  const detailUrl = `/pokemon/${pokemon.id}${currentSearch ? `?${currentSearch}` : ""}`;
+
   return (
     <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700/50 hover:bg-gray-800/70 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/20 group">
       <CardHeader className="relative p-0">
@@ -96,7 +106,7 @@ export function PokemonCard({ url }: PokemonCardProps) {
                 ? "text-red-400 hover:text-red-300"
                 : "text-gray-400 hover:text-red-400"
             } hover:bg-gray-700/50`}
-            onClick={user ? handleToggleFavorite : () => navigate("/login")}
+            onClick={user ? handleToggleFavorite : handleLoginRedirect}
             disabled={favoriteLoading || isToggleLoading}
           >
             {isToggleLoading ? (
@@ -155,8 +165,8 @@ export function PokemonCard({ url }: PokemonCardProps) {
           className="w-full bg-blue-500 hover:bg-blue-600 text-white border-blue-500 transition-all duration-200"
         >
           <Link
-            to={`/pokemon/${pokemon.id}`}
-            className="flex items-center gap-1"
+            to={detailUrl}
+            className="flex items-center gap-1 justify-center"
           >
             <Eye className="w-4 h-4" />
             View Details

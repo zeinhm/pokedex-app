@@ -46,9 +46,9 @@ describe("PokemonListPage", () => {
     const debouncedSearch = await import("@/shared/hooks/useDebounceSearch");
     vi.mocked(debouncedSearch.useDebouncedSearch).mockReturnValue({
       searchTerm: "",
-      debouncedSearchTerm: "",
+      debouncedTerm: "",
       isTyping: false,
-      updateSearchTerm: vi.fn(),
+      updateSearch: vi.fn(),
       clearSearch: vi.fn(),
       hasValidSearch: false,
     });
@@ -185,9 +185,9 @@ describe("PokemonListPage", () => {
     const debouncedSearch = await import("@/shared/hooks/useDebounceSearch");
     vi.mocked(debouncedSearch.useDebouncedSearch).mockReturnValue({
       searchTerm: "pikachu",
-      debouncedSearchTerm: "pikachu",
+      debouncedTerm: "pikachu",
       isTyping: false,
-      updateSearchTerm: vi.fn(),
+      updateSearch: vi.fn(),
       clearSearch: vi.fn(),
       hasValidSearch: true,
     });
@@ -239,9 +239,9 @@ describe("PokemonListPage", () => {
     const debouncedSearch = await import("@/shared/hooks/useDebounceSearch");
     vi.mocked(debouncedSearch.useDebouncedSearch).mockReturnValue({
       searchTerm: "nonexistent",
-      debouncedSearchTerm: "nonexistent",
+      debouncedTerm: "nonexistent",
       isTyping: false,
-      updateSearchTerm: vi.fn(),
+      updateSearch: vi.fn(),
       clearSearch: vi.fn(),
       hasValidSearch: true,
     });

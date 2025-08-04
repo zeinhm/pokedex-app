@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useParams, useSearchParams } from "react-router";
 import { ArrowLeft, Heart, AlertCircle } from "lucide-react";
 import { usePokemon } from "@features/pokemon/hooks/usePokemon";
 import {
@@ -27,18 +27,11 @@ export const meta: MetaFunction = ({ params }) => {
 export default function PokemonDetailPage() {
   const { id } = useParams();
   const [imageLoading, setImageLoading] = useState(true);
-
-  const {
-    data: pokemon,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = usePokemon(id as string);
+  const [searchParams] = useSearchParams();
+  const currentSearch = searchParams.toString();
+  const { data: pokemon, isLoading, isError, error } = usePokemon(id as string);
   const { user } = useAuth();
-  const { data: favoriteStatus, isLoading: favoriteLoading } = useIsFavorited(
-    pokemon?.id || 0
-  );
+  const { data: favoriteStatus } = useIsFavorited(pokemon?.id || 0);
   const addFavorite = useAddFavorite();
   const removeFavorite = useRemoveFavorite();
   const toggleFavoriteLoading =
@@ -86,7 +79,7 @@ export default function PokemonDetailPage() {
       <div className="min-h-screen pt-16">
         <div className="w-full h-screen flex flex-col">
           <div className="flex items-center justify-between p-6">
-            <Link to="/pokemon">
+            <Link to={`/pokemon?${currentSearch}`}>
               <ArrowLeft className="w-6 h-6 text-white" />
             </Link>
             <span className="text-white font-semibold">Error</span>
@@ -105,7 +98,7 @@ export default function PokemonDetailPage() {
                   : "Failed to load Pokemon details"}
               </p>
               <Link
-                to="/pokemon"
+                to={`/pokemon?${currentSearch}`}
                 className="text-blue-400 hover:text-blue-300 underline"
               >
                 Back to Pokemon List

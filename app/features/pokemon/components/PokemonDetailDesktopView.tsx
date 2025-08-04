@@ -8,7 +8,7 @@ import {
   Weight,
   Zap,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import type { Pokemon } from "@features/pokemon/types/pokemon.types";
 import { getBackgroundColorByPokemonType } from "@/shared/utils/pokemon.utils";
 import { StatusBar } from "./StatusBar";
@@ -39,6 +39,8 @@ export function PokemonDetailDesktopView(props: PokemonDetailProps) {
   } = props;
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const currentSearch = searchParams.toString();
 
   return (
     <div className="hidden lg:block">
@@ -49,7 +51,10 @@ export function PokemonDetailDesktopView(props: PokemonDetailProps) {
             variant="ghost"
             className="text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all duration-200"
           >
-            <Link to="/pokemon" className="flex items-center gap-2">
+            <Link
+              to={`/pokemon?${currentSearch}`}
+              className="flex items-center gap-2"
+            >
               <ArrowLeft className="w-5 h-5" />
               Back to Pokemon List
             </Link>
