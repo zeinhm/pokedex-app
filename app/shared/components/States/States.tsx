@@ -81,8 +81,6 @@ export function LoadingState({
 interface EmptyStateProps {
   title?: string;
   description?: string;
-  icon?: React.ReactNode;
-  action?: React.ReactNode;
 }
 
 export function EmptyState({
